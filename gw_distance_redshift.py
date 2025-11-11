@@ -1,11 +1,3 @@
-# gw_distance_redshift.py
-"""
-Compute distance and redshift range from a LIGO/Virgo skymap URL.
-
-Author: Hemanth Kumar
-Date: 2025-11-11
-"""
-
 import re
 import numpy as np
 from astropy.utils.data import download_file
@@ -15,6 +7,7 @@ from ligo.skymap.distance import parameters_to_marginal_moments
 from astropy import units as u
 import astropy.cosmology.units as cu
 from astropy.cosmology import WMAP9
+import pandas as pd
 
 
 def compute_distance_redshift(url):
@@ -29,13 +22,7 @@ def compute_distance_redshift(url):
     Returns
     -------
     dict
-        Dictionary containing:
-        - 'event_name': GW event identifier
-        - 'distmean': mean distance (Mpc)
-        - 'diststd': standard deviation (Mpc)
-        - 'z_min', 'z_max' : 1.28σ redshift bounds
-        - 'z_min1', 'z_max1' : 2σ redshift bounds
-        - 'z_min2', 'z_max2' : kσ redshift bounds
+        Dictionary containing distance mean/std and redshift bounds.
     """
 
     # Extract event name
@@ -69,7 +56,6 @@ def compute_distance_redshift(url):
         map_struct["distsigma"]
     )
 
-    distance = Distance(distmean * u.Mpc)
     sig = distmean / diststd
     k = 3 if sig > 3 else np.round(sig, 3)
     print(f"k = {k}")
@@ -111,7 +97,50 @@ def compute_distance_redshift(url):
     return result
 
 
+def filter_agn_by_redshift(nagn, z_bounds):
+    """
+    Filter crossmatched AGNs within given GW redshift ranges.
+
+    Parameters
+    ----------
+    nagn : pandas.DataFrame
+        DataFrame with at least a 'z' column.
+    z_bounds : dict
+        Dictionary from compute_distance_redshift().
+
+    Returns
+    -------
+    dict
+        Filtered AGN subsets for 1.28σ, 2σ, and kσ ranges.
+    """
+    z_min, z_max = z_bounds["z_min"], z_bounds["z_max"]
+    z_min1, z_max1 = z_bounds["z_min1"], z_bounds["z_max1"]
+    z_min2, z_max2 = z_bounds["z_min2"], z_bounds["z_max2"]
+
+    final_1sigma = nagn[(nagn["z"] >= z_min) & (nagn["z"] < z_max)]
+    final_2sigma = nagn[(nagn["z"] >= z_min1) & (nagn["z"] < z_max1)]
+    final_ksigma = nagn[(nagn["z"] >= z_min2) & (nagn["z"] < z_max2)]
+
+    print(f"1.28σ AGNs: {len(final_1sigma)} | 2σ AGNs: {len(final_2sigma)} | kσ AGNs: {len(final_ksigma)}")
+
+    return {
+        "final_1sigma": final_1sigma,
+        "final_2sigma": final_2sigma,
+        "final_ksigma": final_ksigma,
+    }
+
+
 if __name__ == "__main__":
     # Example usage
     url = "https://gracedb.ligo.org/api/superevents/S230518h/files/bayestar.fits.gz"
-    compute_distance_redshift(url)
+    z_bounds = compute_distance_redshift(url)
+
+    # Example: Load crossmatched AGN file
+    nagn = pd.read_csv("crossmatched_agn.csv")  # Must contain 'z' column
+
+    filtered = filter_agn_by_redshift(nagn, z_bounds)
+
+    # Save outputs
+    for key, df in filtered.items():
+        df.to_csv(f"{key}.csv", index=False)
+    print("✅ Saved filtered AGN subsets by GW redshift bounds.")
