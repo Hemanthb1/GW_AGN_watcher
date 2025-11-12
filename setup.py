@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="gw-agn-WATCHER",
+    name="gw_agn_watcher",
     version="0.1.0",
     author="Hemanth Kumar",
     author_email="hemanth.bommireddy195@gmail.com",
