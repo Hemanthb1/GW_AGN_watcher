@@ -22,4 +22,5 @@ __all__ = [
     "match_milliquas",
     "ps1_query",
     "radecligo",
+    "stamplc_classify"
 ]
