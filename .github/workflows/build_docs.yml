@@ -26,7 +26,7 @@ jobs:
       - name: Build docs
         run: |
           cd docs
-          sphinx-apidoc -o source ../gw_agn_watcher
+          sphinx-apidoc -o source ../gw-agn watcher
           make html
 
       - name: Upload Docs Artifact
