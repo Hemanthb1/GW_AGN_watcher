@@ -2,7 +2,7 @@ import os
 import sys
 sys.path.insert(0, os.path.abspath('../GW_AGN_watcher/gw-agn-watcher'))  # path to your package
 
-project = 'gw-agn-watcher'
+project = 'gw_agn_watcher'
 author = 'Hemanth Kumar'
 extensions = [
     'sphinx.ext.autodoc',
