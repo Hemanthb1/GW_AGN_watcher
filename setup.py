@@ -1,3 +1,5 @@
+from setuptools import setup, find_packages
+
 setup(
     name="gw-agn-WATCHER",
     version="0.1.0",
