@@ -24,6 +24,13 @@ setup(
         "scipy",
         "requests",
         "pandas",
-        "astroquery"
+        "astroquery",
+        "alphashape",
+        "psycopg2",
+        "requests",
+        "ephem",
+        "dustmaps",
+        "dust_extinction",
+        "ligo.skymap"
     ],
 )
