@@ -1,22 +1,27 @@
-from setuptools import setup, find_packages
-
 setup(
-    name="gw_agn_watcher",
+    name="gw-agn-WATCHER",
     version="0.1.0",
-    packages=find_packages(),
-    install_requires=[
-        "numpy",
-        "scipy",
-        "astropy",
-        # add other dependencies here
-    ],
-    python_requires='>=3.8',
     author="Hemanth Kumar",
     author_email="hemanth.bommireddy195@gmail.com",
-    description="Software to crossmatch and filter LVK and ZTF alerts via ALeRCE",
-    url="https://github.com/Hemanthb1/GW_AGN_Watcher",
+    description="Python tools for GW AGN follow-up",
+    long_description=open("README.md").read(),
+    long_description_content_type="text/markdown",
+    url="https://github.com/yourusername/GW_AGN_watcher",
+    packages=find_packages(),
+    license="MIT",
     classifiers=[
         "Programming Language :: Python :: 3",
+        "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
+    ],
+    python_requires='>=3.8',
+    install_requires=[
+        "numpy",
+        "astropy",
+        "matplotlib",
+        "scipy",
+        "requests",
+        "pandas",
+        "astroquery"
     ],
 )
