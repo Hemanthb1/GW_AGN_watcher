@@ -8,7 +8,8 @@ Purpose: Compute ecliptic latitude, galactic latitude, and galactic extinction (
 import numpy as np
 import pandas as pd
 import ephem
-from astropy import coordinates, units as u
+import astropy.coordinates as coord
+from astropy import units as u
 from dustmaps.sfd import SFDQuery
 from dust_extinction.parameter_averages import F19
 
@@ -48,20 +49,14 @@ def compute_lat_extinction(final_df, rv=3.1, apply_cuts=True):
 
     for oid in final_df.index:
         try:
-            ra = final_df.loc[oid, 'meanra']
-            dec = final_df.loc[oid, 'meandec']
+            ra = final_df.loc[oid].meanra
+            dec = final_df.loc[oid].meandec
+            coo = coord.SkyCoord(ra, dec, unit='deg', frame='fk5')  
 
-            ecl_lat[oid] = np.rad2deg(
-                ephem.Ecliptic(
-                    ephem.Equatorial(f"{ra/15.}", f"{dec}", epoch=ephem.J2000)
-                ).lat
-            )
+            ecl_lat[oid] = np.rad2deg(ephem.Ecliptic(ephem.Equatorial('%s' % (ra / 15.), '%s' % dec, epoch=ephem.J2000)).lat)
 
-            gal_lat[oid] = np.rad2deg(
-                ephem.Galactic(
-                    ephem.Equatorial(f"{ra/15.}", f"{dec}", epoch=ephem.J2000)
-                ).lat
-            )
+        # galactic latitude
+            gal_lat[oid] = np.rad2deg(ephem.Galactic(ephem.Equatorial('%s' % (ra / 15.), '%s' % dec, epoch=ephem.J2000)).lat)
 
         except Exception as e:
             print(f"⚠️ Error processing {oid}: {e}")
@@ -84,9 +79,11 @@ def compute_lat_extinction(final_df, rv=3.1, apply_cuts=True):
     dfp = pd.DataFrame.from_dict({"ecl_lat": ecl_lat, "gal_lat": gal_lat})
     dfp["gal_A_g"] = A_g
     dfp = dfp.reset_index().rename(columns={"index": "oid"})
+    dfp['oid'] = dfp['oid'].astype(str)
+    final_df['oid'] = final_df['oid'].astype(str)
 
     # Merge with input catalog
-    candidates = final_df.merge(dfp, on="oid", how="left")
+    candidates = final_df.merge(dfp,left_index= True,right_index=True)
 
     # Apply astrophysical filtering
     if apply_cuts:
