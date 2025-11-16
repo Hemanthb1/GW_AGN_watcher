@@ -7,6 +7,10 @@ import importlib
 
 from . import radecligo, findminclust, divide, mainquery, match_milliquas
 from . import redshift, classifiers, detections, extinction
+from .db import get_alerce_connection
+
+
+
 
 def run_pipeline(skymap_url, milliquas_csv):
     # Download and process skymap
@@ -28,8 +32,9 @@ def run_pipeline(skymap_url, milliquas_csv):
     res1 = redshift.filter_agn_by_redshift(nagn, res)
     
     # Query classifiers and detections (requires database connection)
-    cand = classifiers.query_classifiers(None, res1['final_2sigma'])  # Pass actual conn if available
-    det = detections.query_detections(cand, None)
+    conn = get_alerce_connection()
+    cand = classifiers.query_classifiers(conn, res1['final_2sigma'])  # Pass actual conn if available
+    det = detections.query_detections(cand, conn)
     
     # Merge and compute extinction
     final1 = pd.merge(cand, det, on=['oid'])
