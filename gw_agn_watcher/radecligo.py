@@ -14,7 +14,6 @@ from astropy.io import fits
 import astropy_healpix as ah
 import astropy.units as u
 
-
 def radecligo(url, credible_level=0.9, plot=False):
     """
     Download and process a LIGO/Virgo/KAGRA skymap FITS file.
@@ -43,60 +42,79 @@ def radecligo(url, credible_level=0.9, plot=False):
     """
 
     # --- Download and open skymap ---
-    gw_file = download_file(url, cache=True)
-    with fits.open(gw_file) as hdul:
-        mjd_obs = hdul[1].header.get('MJD-OBS', np.nan)
+    gw_skymap = download_file(url, cache=True)
+    head=fits.open(gw_skymap)
+    time=head[1].header['MJD-OBS']
+    skymap = QTable.read(gw_skymap)
 
-    skymap = QTable.read(gw_file)
+    skymap2 = QTable.read(gw_skymap)
     skymap.sort('PROBDENSITY', reverse=True)
-
-    # --- Compute cumulative probability ---
+    #skymap.sort('PROB', reverse=True)
     level, ipix = ah.uniq_to_level_ipix(skymap['UNIQ'])
     nside = ah.level_to_nside(level)
-    pixel_area = ah.nside_to_pixel_area(nside)
+    pixel_area = ah.nside_to_pixel_area(ah.level_to_nside(level))
     prob = pixel_area * skymap['PROBDENSITY']
     cumprob = np.cumsum(prob)
-    skymap['PROB'] = cumprob
+    i = cumprob.searchsorted(0.9)
+    skymap['PROB']=cumprob
+    skymap = skymap[:i]
 
-    # --- Truncate to the credible region ---
-    cutoff_index = np.searchsorted(cumprob, credible_level)
-    skymap = skymap[:cutoff_index]
-
-    # --- Convert to RA/Dec ---
+    skymap.sort('UNIQ')
+    skymap = skymap['UNIQ','PROB']
     level, ipix = ah.uniq_to_level_ipix(skymap['UNIQ'])
     nside = ah.level_to_nside(level)
-    ra, dec = ah.healpix_to_lonlat(ipix, nside, order='nested')
-    ra_deg, dec_deg = ra.to(u.deg).value, dec.to(u.deg).value
 
-    # --- Make DataFrame ---
-    df = pd.DataFrame({
-        'meanra': ra_deg,
-        'meandec': dec_deg,
-        'pixel_no': skymap['UNIQ'],
-        'prob_contour': skymap['PROB']
+    # Ensure little-endian for safety
+    def ensure_little_endian(data):
+        if data.dtype.byteorder == '>':
+            data = data.byteswap().newbyteorder('<')
+        return data
+
+    skymap= ensure_little_endian(np.array(skymap))
+
+    # RA/Dec conversion
+    ra, dec = ah.healpix_to_lonlat(ipix, nside, order='nested')
+    df = pd.DataFrame(skymap)
+    ra_deg = np.rad2deg(ra.value)
+    dec_deg = np.rad2deg(dec.value)
+    selected_elements=df['PROB']
+    arr=df['UNIQ']
+
+    # Build pandas DataFrame
+    skymap1 = pd.DataFrame({
+        'meanra': ra_deg.flatten(),
+        'meandec': dec_deg.flatten(),
+        'pixel_no': arr.values.flatten(),
+        'prob_contour': selected_elements.values.flatten()
     })
 
-    # --- Extract event name from URL ---
-    event_name = None
-    parts = url.split('/')
-    if 'superevents' in parts and 'files' in parts:
-        i1, i2 = parts.index('superevents'), parts.index('files')
-        event_name = parts[i1 + 1] if i2 > i1 + 1 else None
-
-    # --- Optional plot ---
+    # Optional plotting
     if plot:
-        plt.figure(figsize=(5, 4))
-        plt.scatter(ra_deg, dec_deg, s=0.1, c='k')
-        plt.xlabel("RA [deg]")
-        plt.ylabel("Dec [deg]")
-        plt.title(f"{event_name or 'GW event'}: {credible_level:.0%} credible region")
+        plt.figure(figsize=(8,4))
+        plt.scatter(ra_deg, dec_deg, s=0.5)
+        plt.xlabel('RA [deg]')
+        plt.ylabel('Dec [deg]')
+        plt.title('GW Skymap Pixels')
         plt.show()
 
-    return skymap, df, ra_deg, dec_deg, mjd_obs, event_name
+    # Extract event name from URL
+    strings_list = url.split('/')
+    start_index, end_index = -1, -1
+    for i, string in enumerate(strings_list):
+        if string == 'superevents':
+            start_index = i
+        elif string == 'files' and start_index != -1:
+            end_index = i
+            break
+    event_name = 'unknown'
+    if start_index != -1 and end_index != -1:
+        event_name = ' '.join(strings_list[start_index+1:end_index]).strip()
 
+    return skymap, skymap1, ra_deg, dec_deg, time, event_name
 
+# Example usage if run as script
 if __name__ == "__main__":
-    # Example use (for testing)
     test_url = "https://gracedb.ligo.org/api/superevents/S230518h/files/bayestar.fits.gz"
     skymap, df, ra, dec, mjd, event = radecligo(test_url, plot=True)
     print(f"Event: {event}, MJD: {mjd}, Pixels: {len(df)}")
+
