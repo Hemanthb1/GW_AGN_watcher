@@ -1,4 +1,3 @@
-# match_milliquas.py
 """
 Crossmatch candidates with the Milliquas AGN catalog.
 Author: Hemanth Kumar
@@ -11,16 +10,16 @@ from astropy.coordinates import SkyCoord
 import astropy.units as u
 
 
-def match_with_milliquas(candidates_csv, milliquas_csv, output_csv='matched_milliquas.csv'):
+def match_with_milliquas(cr, df1, output_csv='matched_milliquas.csv'):
     """
     Crossmatch candidate sources with the Milliquas catalog.
 
     Parameters
     ----------
-    candidates_csv : str
-        Path to the CSV file containing candidate objects (must include 'meanra' and 'meandec' columns).
-    milliquas_csv : str
-        Path to the Milliquas catalog file (must include 'ra' and 'dec' columns).
+   cr : dataframe
+        Dataframe containing candidate objects (must include 'meanra' and 'meandec' columns).
+    milliquas_csv : dataframe
+        Dataframe of Milliquas catalog file (must include 'ra' and 'dec' columns).
     output_csv : str, optional
         File to save the crossmatched results. Default is 'matched_milliquas.csv'.
 
@@ -31,8 +30,8 @@ def match_with_milliquas(candidates_csv, milliquas_csv, output_csv='matched_mill
     """
 
     # === Load Data ===
-    cr = pd.read_csv(candidates_csv)
-    df1 = pd.read_csv(milliquas_csv)
+   # cr = pd.read_csv(candidates_csv)
+   # df1 = pd.read_csv(milliquas_csv)
 
     # === Extract coordinates ===
     ra1 = np.array(cr['meanra'])
