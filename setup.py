@@ -8,7 +8,7 @@ setup(
     description="Python tools for GW AGN follow-up",
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
-    url="https://github.com/yourusername/GW_AGN_watcher",
+    url="https://github.com/Hemanthb1/GW_AGN_watcher",
     packages=find_packages(),
     license="MIT",
     classifiers=[
