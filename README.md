@@ -28,4 +28,4 @@ It enables systematic searches for **electromagnetic counterparts** to compact b
 ### Installation
 
 ```bash
-pip install gw-agn-watcher
+pip install gw_agn_watcher
