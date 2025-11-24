@@ -33,6 +33,7 @@ def run_pipeline(skymap_url, milliquas_csv):
     res1 = redshift.filter_agn_by_redshift(nagn, res)
     
     # Query classifiers and detections (requires database connection)
+    conn = get_alerce_connection()
     
     cand = classifiers.query_classifiers(conn, res1['final_2sigma'])  # Pass actual conn if available
     det = detections.query_detections(cand, conn)
