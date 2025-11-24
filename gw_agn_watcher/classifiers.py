@@ -2,7 +2,7 @@
 import pandas as pd
 import numpy as np
 
-def query_stamp_and_lc_classifiers(conn, new_df, batch_size=10000):
+def query_classifiers(conn, new_df, batch_size=10000):
     """
     Query ALeRCE for both stamp_classifier and lc_classifier results,
     filter high-probability sources, and merge them into one DataFrame.
