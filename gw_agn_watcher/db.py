@@ -2,8 +2,6 @@
 import requests
 import psycopg2
 
-import requests
-import psycopg2
 
 def get_alerce_connection():
     """
