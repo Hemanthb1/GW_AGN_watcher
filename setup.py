@@ -32,6 +32,5 @@ setup(
         "dustmaps",
         "dust_extinction",
         "ligo.skymap",
-        "sckiti-learn"
          ],
 )
