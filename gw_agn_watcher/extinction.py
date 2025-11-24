@@ -1,10 +1,3 @@
-# extinction_latitudes.py
-"""
-Module: extinction_latitudes
-Purpose: Compute ecliptic latitude, galactic latitude, and galactic extinction (A_g)
-         for a catalog of objects with mean RA/Dec coordinates, and apply spatial cuts.
-"""
-
 import os
 import numpy as np
 import pandas as pd
@@ -16,7 +9,6 @@ from dustmaps.config import config
 from astropy import coordinates
 from dust_extinction.parameter_averages import F19
 
-
 def alam_fromarrays(ebv, alam_ebv):
     """Compute extinction A_lambda = E(B-V) * (A_lambda / E(B-V))."""
     alam = np.outer(ebv, alam_ebv)
@@ -24,18 +16,43 @@ def alam_fromarrays(ebv, alam_ebv):
         alam = alam[0]
     return alam
 
-
 def compute_lat_extinction(final_df, rv=3.1, apply_cuts=True):
     """
     Compute ecliptic latitude, galactic latitude, and A_g extinction
     for each object in the input DataFrame. Optionally apply astrophysical cuts.
+
+    Parameters
+    ----------
+    final_df : pandas.DataFrame
+        Must contain columns ['meanra', 'meandec', 'ndet'] and have index as 'oid'.
+    rv : float, optional
+        Ratio of total to selective extinction (default 3.1).
+    apply_cuts : bool, optional
+        If True, applies filtering: (ndet > 1 or ecl_lat > 20) & |gal_lat| > 20 & A_g < 1.
+
+    Returns
+    -------
+    dfp : pandas.DataFrame
+        Columns: ['oid', 'ecl_lat', 'gal_lat', 'gal_A_g']
+    candidates : pandas.DataFrame
+        Filtered DataFrame with same index as input (if apply_cuts=True).
     """
 
-    # --- Ensure dustmaps data is available ---
-    if not os.path.exists(os.path.join(config["data_dir"], "sfd")):
-        print("📥 SFD maps missing, downloading...")
-        fetch()  # will download SFD maps into config['data_dir']
+    # --- Initialize dustmaps config ---
+    if config["data_dir"] is None:
+        config.reset()
+        config["data_dir"] = os.path.expanduser("~/.dustmaps")
+    os.makedirs(config["data_dir"], exist_ok=True)
 
+    # --- Ensure SFD maps exist ---
+    sfd_path = os.path.join(config["data_dir"], "sfd")
+    if not os.path.exists(sfd_path) or len(os.listdir(sfd_path)) == 0:
+        print("📥 SFD maps missing, downloading...")
+        fetch()
+    else:
+        print("✅ SFD maps already exist, skipping download.")
+
+    # --- Compute ecliptic and galactic latitudes ---
     ecl_lat = {}
     gal_lat = {}
 
@@ -44,14 +61,17 @@ def compute_lat_extinction(final_df, rv=3.1, apply_cuts=True):
             ra = final_df.loc[oid].meanra
             dec = final_df.loc[oid].meandec
 
-            # Ecliptic and galactic latitude
             ecl_lat[oid] = np.rad2deg(
-                ephem.Ecliptic(ephem.Equatorial(f"{ra/15.}", f"{dec}", epoch=ephem.J2000)).lat
-            )
-            gal_lat[oid] = np.rad2deg(
-                ephem.Galactic(ephem.Equatorial(f"{ra/15.}", f"{dec}", epoch=ephem.J2000)).lat
+                ephem.Ecliptic(
+                    ephem.Equatorial(f"{ra / 15.}", f"{dec}", epoch=ephem.J2000)
+                ).lat
             )
 
+            gal_lat[oid] = np.rad2deg(
+                ephem.Galactic(
+                    ephem.Equatorial(f"{ra / 15.}", f"{dec}", epoch=ephem.J2000)
+                ).lat
+            )
         except Exception as e:
             print(f"⚠️ Error processing {oid}: {e}")
             ecl_lat[oid] = np.nan
