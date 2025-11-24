@@ -5,12 +5,14 @@ Purpose: Compute ecliptic latitude, galactic latitude, and galactic extinction (
          for a catalog of objects with mean RA/Dec coordinates, and apply spatial cuts.
 """
 
+import os
 import numpy as np
 import pandas as pd
 import ephem
 import astropy.coordinates as coord
 from astropy import units as u
-from dustmaps.sfd import SFDQuery
+from dustmaps.sfd import SFDQuery, fetch
+from dustmaps.config import config
 from astropy import coordinates
 from dust_extinction.parameter_averages import F19
 
@@ -27,23 +29,12 @@ def compute_lat_extinction(final_df, rv=3.1, apply_cuts=True):
     """
     Compute ecliptic latitude, galactic latitude, and A_g extinction
     for each object in the input DataFrame. Optionally apply astrophysical cuts.
-
-    Parameters
-    ----------
-    final_df : pandas.DataFrame
-        Must contain columns ['meanra', 'meandec', 'ndet'] and have index as 'oid'.
-    rv : float, optional
-        Ratio of total to selective extinction (default 3.1).
-    apply_cuts : bool, optional
-        If True, applies filtering: (ndet > 1 or ecl_lat > 20) & |gal_lat| > 20 & A_g < 1.
-
-    Returns
-    -------
-    dfp : pandas.DataFrame
-        Columns: ['oid', 'ecl_lat', 'gal_lat', 'gal_A_g']
-    candidates : pandas.DataFrame
-        Filtered DataFrame with same index as input (if apply_cuts=True).
     """
+
+    # --- Ensure dustmaps data is available ---
+    if not os.path.exists(os.path.join(config["data_dir"], "sfd")):
+        print("📥 SFD maps missing, downloading...")
+        fetch()  # will download SFD maps into config['data_dir']
 
     ecl_lat = {}
     gal_lat = {}
@@ -52,19 +43,21 @@ def compute_lat_extinction(final_df, rv=3.1, apply_cuts=True):
         try:
             ra = final_df.loc[oid].meanra
             dec = final_df.loc[oid].meandec
-            coo = coord.SkyCoord(ra, dec, unit='deg', frame='fk5')  
 
-            ecl_lat[oid] = np.rad2deg(ephem.Ecliptic(ephem.Equatorial('%s' % (ra / 15.), '%s' % dec, epoch=ephem.J2000)).lat)
-
-        # galactic latitude
-            gal_lat[oid] = np.rad2deg(ephem.Galactic(ephem.Equatorial('%s' % (ra / 15.), '%s' % dec, epoch=ephem.J2000)).lat)
+            # Ecliptic and galactic latitude
+            ecl_lat[oid] = np.rad2deg(
+                ephem.Ecliptic(ephem.Equatorial(f"{ra/15.}", f"{dec}", epoch=ephem.J2000)).lat
+            )
+            gal_lat[oid] = np.rad2deg(
+                ephem.Galactic(ephem.Equatorial(f"{ra/15.}", f"{dec}", epoch=ephem.J2000)).lat
+            )
 
         except Exception as e:
             print(f"⚠️ Error processing {oid}: {e}")
             ecl_lat[oid] = np.nan
             gal_lat[oid] = np.nan
 
-    # Dust extinction via SFD + Fitzpatrick (2019)
+    # --- Dust extinction via SFD + Fitzpatrick (2019) ---
     coords = coordinates.SkyCoord(
         ra=final_df["meanra"], dec=final_df["meandec"], unit=(u.deg, u.deg), frame="icrs"
     )
@@ -84,7 +77,7 @@ def compute_lat_extinction(final_df, rv=3.1, apply_cuts=True):
     final_df['oid'] = final_df['oid'].astype(str)
 
     # Merge with input catalog
-    candidates = final_df.merge(dfp,left_index= True,right_index=True)
+    candidates = final_df.merge(dfp, left_index=True, right_index=True)
 
     # Apply astrophysical filtering
     if apply_cuts:
