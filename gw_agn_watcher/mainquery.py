@@ -51,7 +51,7 @@ def query_alerce_clusters(skymap_df, time,ra,dec, ndays=200, alpha=0.01):
         
         if alpha_shape.geom_type == 'Polygon':
         # Process the single Polygon
-            print("querying cluster":{i})
+            print("querying cluster:", i)
             x = np.array(alpha_shape.exterior.coords.xy[0])
             y = np.array(alpha_shape.exterior.coords.xy[1])
             ax.plot(x, y,'g',linewidth=1)#S,transform=ax.get_transform('world'))
