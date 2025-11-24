@@ -10,21 +10,9 @@ from astropy.time import Time
 warnings.simplefilter(action='ignore', category=UserWarning)
 
 
-def connect_alerce():
-    """Connect to the ALeRCE PostgreSQL database."""
-    url = "https://raw.githubusercontent.com/alercebroker/usecases/master/alercereaduser_v4.json"
-    params = requests.get(url).json()['params']
-
-    conn = psycopg2.connect(
-        dbname=params['dbname'],
-        user=params['user'],
-        host=params['host'],
-        password=params['password']
-    )
-    return conn
 
 
-def query_alerce_clusters(skymap_df, time,ra,dec, ndays=200, alpha=0.01):
+def query_alerce_clusters(conn,skymap_df, time,ra,dec, ndays=200, alpha=0.01):
     """
     Divide the sky map into alpha-shape polygons by cluster label,
     query ALeRCE for objects inside each polygon and within [time, time+ndays].
