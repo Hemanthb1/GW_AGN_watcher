@@ -21,7 +21,8 @@ def run_pipeline(skymap_url, milliquas_csv):
     df_out, kmeans = divide.dividemap(num, skymap1)
     
     # Query ALeRCE clusters
-    new_df = mainquery.query_alerce_clusters(df_out, mjd_obs, ra_deg, dec_deg)
+    conn = get_alerce_connection()
+    new_df = mainquery.query_alerce_clusters(conn, df_out, mjd_obs, ra_deg, dec_deg)
     
     # Match with Milliquas
     agn = pd.read_csv(milliquas_csv)
@@ -32,7 +33,7 @@ def run_pipeline(skymap_url, milliquas_csv):
     res1 = redshift.filter_agn_by_redshift(nagn, res)
     
     # Query classifiers and detections (requires database connection)
-    conn = get_alerce_connection()
+    
     cand = classifiers.query_classifiers(conn, res1['final_2sigma'])  # Pass actual conn if available
     det = detections.query_detections(cand, conn)
     
