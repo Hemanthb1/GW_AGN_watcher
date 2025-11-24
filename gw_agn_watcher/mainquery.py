@@ -17,7 +17,6 @@ def query_alerce_clusters(conn,skymap_df, time,ra,dec, ndays=200, alpha=0.01):
     Divide the sky map into alpha-shape polygons by cluster label,
     query ALeRCE for objects inside each polygon and within [time, time+ndays].
     """
-    conn = connect_alerce()
     new_df = pd.DataFrame()
     n_clusters = len(skymap_df['cluster_label'].unique())
 
