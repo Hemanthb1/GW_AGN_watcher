@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="gw_agn_watcher",
-    version="0.1.5",
+    version="0.1.6",
     author="Hemanth Kumar",
     author_email="hemanth.bommireddy195@gmail.com",
     description="Python tools for GW AGN follow-up",
