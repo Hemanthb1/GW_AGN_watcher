@@ -26,11 +26,12 @@ setup(
         "pandas",
         "astroquery",
         "alphashape",
-        "psycopg2",
+        "psycopg2-binary",
         "requests",
         "ephem",
         "dustmaps",
         "dust_extinction",
-        "ligo.skymap"
-    ],
+        "ligo.skymap",
+        "sckiti-learn"
+         ],
 )
