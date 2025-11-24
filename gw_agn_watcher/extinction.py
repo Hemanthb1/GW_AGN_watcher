@@ -11,6 +11,7 @@ import ephem
 import astropy.coordinates as coord
 from astropy import units as u
 from dustmaps.sfd import SFDQuery
+from astropy import coordinates
 from dust_extinction.parameter_averages import F19
 
 
