@@ -67,26 +67,65 @@ def compute_distance_redshift(url):
     distance_upper1 = Distance((distmean + 2 * diststd) * u.Mpc)
     distance_lower2 = Distance(max(distmean - k * diststd, 0) * u.Mpc)
     distance_upper2 = Distance((distmean + k * diststd) * u.Mpc)
-
-    # Convert to redshift bounds
-    z_min = distance_lower.to(cu.redshift, cu.redshift_distance(WMAP9, kind="comoving"))
-    z_max = distance_upper.to(cu.redshift, cu.redshift_distance(WMAP9, kind="comoving"))
-    z_min1 = distance_lower1.to(cu.redshift, cu.redshift_distance(WMAP9, kind="comoving"))
-    z_max1 = distance_upper1.to(cu.redshift, cu.redshift_distance(WMAP9, kind="comoving", zmax=3000))
-    z_min2 = distance_lower2.to(cu.redshift, cu.redshift_distance(WMAP9, kind="comoving", zmin=1e-12))
-    z_max2 = distance_upper2.to(cu.redshift, cu.redshift_distance(WMAP9, kind="comoving", zmax=20000))
-
+    
+    ZMIN_FLOOR = 1e-11
+    DIST_FLOOR = 0.01 * u.Mpc  # 10 kpc — too small for reliable z inversion
+    ZMAX1 = 3000
+    ZMAX2 = 20000
+    
+    # --- Convert to redshift bounds (safe with logs) ---
+    if distance_lower < DIST_FLOOR:
+        print(f"⚠️ {event_name}: distance_lower below {DIST_FLOOR}, setting z_min=0.0")
+        z_min = 0.0
+    else:
+        z_min = distance_lower.to(cu.redshift, cu.redshift_distance(WMAP9, kind='comoving')).value
+    
+    if distance_upper < DIST_FLOOR:
+        print(f"⚠️ {event_name}: distance_upper below {DIST_FLOOR}, setting z_max=0.0")
+        z_max = 0.0
+    else:
+        z_max = distance_upper.to(cu.redshift, cu.redshift_distance(WMAP9, kind='comoving')).value
+    
+    if distance_lower1 < DIST_FLOOR:
+        print(f"⚠️ {event_name}: distance_lower1 below {DIST_FLOOR}, setting z_min1=0.0")
+        z_min1 = 0.0
+    else:
+        z_min1 = distance_lower1.to(cu.redshift, cu.redshift_distance(WMAP9, kind='comoving')).value
+    
+    if distance_upper1 < DIST_FLOOR:
+        print(f"⚠️ {event_name}: distance_upper1 below {DIST_FLOOR}, setting z_max1=0.0")
+        z_max1 = 0.0
+    else:
+        z_max1 = distance_upper1.to(cu.redshift, cu.redshift_distance(WMAP9, kind='comoving', zmax=ZMAX1)).value
+    
+    if distance_lower2 < DIST_FLOOR:
+        print(f"⚠️ {event_name}: distance_lower2 below {DIST_FLOOR}, setting z_min2=0.0")
+        z_min2 = 0.0
+    else:
+        z_min2 = distance_lower2.to(cu.redshift, cu.redshift_distance(WMAP9, kind='comoving', zmin=ZMIN_FLOOR)).value
+    
+    if distance_upper2 < DIST_FLOOR:
+        print(f"⚠️ {event_name}: distance_upper2 below {DIST_FLOOR}, setting z_max2=0.0")
+        z_max2 = 0.0
+    else:
+        z_max2 = distance_upper2.to(cu.redshift, cu.redshift_distance(WMAP9, kind='comoving', zmax=ZMAX2)).value
+    
+    
+    # --- Compile results ---
     result = {
         "event_name": event_name,
         "distmean_Mpc": distmean,
         "diststd_Mpc": diststd,
-        "z_min": z_min.value,
-        "z_max": z_max.value,
-        "z_min1": z_min1.value,
-        "z_max1": z_max1.value,
-        "z_min2": z_min2.value,
-        "z_max2": z_max2.value,
+        "z_min": z_min,
+        "z_max": z_max,
+        "z_min1": z_min1,
+        "z_max1": z_max1,
+        "z_min2": z_min2,
+        "z_max2": z_max2,
     }
+
+    # Convert to redshift bounds
+   
 
     print(f"Event: {event_name}")
     print(f"Mean distance: {distmean:.2f} ± {diststd:.2f} Mpc")
