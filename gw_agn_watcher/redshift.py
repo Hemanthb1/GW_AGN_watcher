@@ -129,9 +129,9 @@ def compute_distance_redshift(url):
 
     print(f"Event: {event_name}")
     print(f"Mean distance: {distmean:.2f} ± {diststd:.2f} Mpc")
-    print(f"Redshift range (1.28σ): {z_min.value:.4f} – {z_max.value:.4f}")
-    print(f"Redshift range (2σ): {z_min1.value:.4f} – {z_max1.value:.4f}")
-    print(f"Redshift range (kσ): {z_min2.value:.4f} – {z_max2.value:.4f}")
+    print(f"Redshift range (1.28σ): {z_min:.4f} – {z_max:.4f}")
+    print(f"Redshift range (2σ): {z_min1:.4f} – {z_max1:.4f}")
+    print(f"Redshift range (kσ): {z_min2:.4f} – {z_max2:.4f}")
 
     return result
 
