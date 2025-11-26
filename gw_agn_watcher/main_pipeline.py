@@ -31,6 +31,7 @@ def run_pipeline(skymap_url, milliquas_csv):
     # Redshift filtering
     res = redshift.compute_distance_redshift(skymap_url)
     res1 = redshift.filter_agn_by_redshift(nagn, res)
+    res1.to_csv(output_csv, index=False)
     
     # Query classifiers and detections (requires database connection)
     conn = get_alerce_connection()
