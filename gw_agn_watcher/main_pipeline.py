@@ -31,18 +31,22 @@ def run_pipeline(skymap_url, milliquas_csv):
     # Redshift filtering
     res = redshift.compute_distance_redshift(skymap_url)
     res1 = redshift.filter_agn_by_redshift(nagn, res)
-    res1.to_csv(output_csv, index=False)
+    res1.to_csv('redshift.csv', index=False)
     
     # Query classifiers and detections (requires database connection)
     conn = get_alerce_connection()
     
-    cand = classifiers.query_classifiers(conn, res1['final_2sigma'])  # Pass actual conn if available
+    cand = classifiers.query_classifiers(conn, res1['final_2sigma']) 
+    cand.to_csv('classifiers.csv', index=False)# Pass actual conn if available
     det = detections.query_detections(cand, conn)
+    
     
     # Merge and compute extinction
     final1 = pd.merge(cand, det, on=['oid'])
     final1['event_id'] = event_name
+    final1.to_csv('final1.csv',index=False)
     importlib.reload(extinction)
     dust, candidates = extinction.compute_lat_extinction(final1, apply_cuts=True)
+    
     
     return candidates, ra_deg, dec_deg
