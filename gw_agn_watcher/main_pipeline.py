@@ -48,8 +48,8 @@ def run_pipeline(skymap_url, milliquas_csv):
     importlib.reload(extinction)
     dust, candidates = extinction.compute_lat_extinction(final1, apply_cuts=True)
     suffix = "&count=true&page=1&perPage=1000&sortDesc=true&selectedClassifier=stamp_classifier"
-    url = "https://alerce.online/?" + "&".join("oid=%s" % i for i in candidates.oid) + suffix
+    #url = "https://alerce.online/?" + "&".join("oid=%s" % i for i in candidates.oid) + suffix
 
     
     
-    return candidates, ra_deg, dec_deg, url
+    return candidates, ra_deg, dec_deg
