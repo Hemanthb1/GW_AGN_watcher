@@ -10,7 +10,7 @@ from . import redshift, classifiers, detections, extinction
 from .db import get_alerce_connection
 
 
-def run_pipeline(skymap_url, milliquas_csv):
+def run_pipeline(skymap_url, milliquas_csv, sigma_cut="2sigma"):
     print("🚀 Starting GW–AGN crossmatching pipeline...")
     print(f"🔗 Skymap: {skymap_url}")
     print(f"📂 Milliquas catalog: {milliquas_csv}\n")
