@@ -47,18 +47,24 @@ def run_pipeline(skymap_url, milliquas_csv, sigma_cut="2sigma"):
     res1 = redshift.filter_agn_by_redshift(nagn, res)
     res1["final_2sigma"].to_csv("redshift.csv", index=False)
   
-    valid_keys = {"1sigma", "2sigma", "3sigma", "ksigma"}
+     valid_keys = {
+        "1sigma": "final_1sigma",
+        "2sigma": "final_2sigma",
+        "ksigma": "final_ksigma"
+    }
+
+    # Validate user choice
     if sigma_cut not in valid_keys:
         print(f"⚠️ Invalid sigma_cut='{sigma_cut}'. Defaulting to '2sigma'.")
         sigma_cut = "2sigma"
 
-    # Handle dict outputs (common for your current redshift module)
-    if isinstance(res1, dict) and sigma_cut in res1:
-        df_final = pd.DataFrame(res1[sigma_cut])
-    elif isinstance(res1, pd.DataFrame):
-        df_final = res1
+    sigma_key = valid_keys[sigma_cut]  # e.g. "final_2sigma"
+
+    # --- Handle dictionary outputs properly ---
+    if isinstance(res1, dict) and sigma_key in res1:
+        df_final = pd.DataFrame(res1[sigma_key])
     else:
-        print(f"⚠️ Redshift filtering returned no '{sigma_cut}' key.")
+        print(f"⚠️ Redshift filtering returned no '{sigma_key}' data.")
         return pd.DataFrame(), ra_deg, dec_deg, None
 
     if df_final.empty:
