@@ -47,7 +47,7 @@ def run_pipeline(skymap_url, milliquas_csv, sigma_cut="2sigma"):
     res1 = redshift.filter_agn_by_redshift(nagn, res)
     res1["final_2sigma"].to_csv("redshift.csv", index=False)
   
-     valid_keys = {
+    valid_keys = {
         "1sigma": "final_1sigma",
         "2sigma": "final_2sigma",
         "ksigma": "final_ksigma"
