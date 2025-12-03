@@ -1,3 +1,5 @@
+import warnings
+warnings.filterwarnings("ignore")
 import os
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -44,12 +46,27 @@ def run_pipeline(skymap_url, milliquas_csv):
     res = redshift.compute_distance_redshift(skymap_url)
     res1 = redshift.filter_agn_by_redshift(nagn, res)
     res1["final_2sigma"].to_csv("redshift.csv", index=False)
-    print(f"✅ Redshift filtering complete: {len(res1)} objects remain within 2σ distance.\n")
+  
+    valid_keys = {"1sigma", "2sigma", "3sigma", "ksigma"}
+    if sigma_cut not in valid_keys:
+        print(f"⚠️ Invalid sigma_cut='{sigma_cut}'. Defaulting to '2sigma'.")
+        sigma_cut = "2sigma"
 
-    if res1.empty or "final_2sigma" not in res1:
-        print("⚠️ No AGNs passed redshift cut — stopping early.")
-        return res1, ra_deg, dec_deg, None
+    # Handle dict outputs (common for your current redshift module)
+    if isinstance(res1, dict) and sigma_cut in res1:
+        df_final = pd.DataFrame(res1[sigma_cut])
+    elif isinstance(res1, pd.DataFrame):
+        df_final = res1
+    else:
+        print(f"⚠️ Redshift filtering returned no '{sigma_cut}' key.")
+        return pd.DataFrame(), ra_deg, dec_deg, None
 
+    if df_final.empty:
+        print(f"⚠️ No AGNs passed the {sigma_cut} redshift cut — stopping early.")
+        return df_final, ra_deg, dec_deg, None
+
+    df_final.to_csv(f"redshift_{sigma_cut}.csv", index=False)
+    print(f"✅ Redshift filtering complete: {len(df_final)} objects remain within {sigma_cut} distance.\n")
     # --- Step 6: Query classifiers and detections ---
     conn = get_alerce_connection()
     cand = classifiers.query_classifiers(conn, res1["final_2sigma"])
