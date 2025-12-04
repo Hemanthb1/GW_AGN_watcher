@@ -16,7 +16,7 @@ It enables systematic searches for **electromagnetic counterparts** to compact b
 ### Key Features
 
 - 📡 **Ingest LVK skymaps** (`.fits`, HEALPix format) 
-- 🌌 **Crossmatch ZTF alerts** with AGN catalogs (e.g., Milliquas, WISE)
+- 🌌 **Crossmatch ZTF alerts** with AGN catalogs (e.g., Milliquas)
 - 🧠 **Apply ML-based filters** using ALeRCE classifiers, Pan-STARRS morphology, and Deep Real/Bogus scores
 - 📅 **Temporal and spatial filtering** relative to the GW trigger time and sky localization
 - 🎯 **Host-galaxy association** and ranking based on 2σ GW distance posteriors
