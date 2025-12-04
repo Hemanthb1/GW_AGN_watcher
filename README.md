@@ -8,7 +8,7 @@
 
 ### Overview
 
-**`gw_agn_watcher`** is a Python package for the **automated crossmatching of gravitational-wave (GW) sky maps** from the LIGO–Virgo–KAGRA (LVK) Collaboration with **optical transient alerts and AGN catalogs**.  
+**`gw_agn_watcher`** is a Python package for the **automated crossmatching of gravitational-wave (GW) sky maps** from the LIGO–Virgo–KAGRA (LVK) Collaboration with ** ZTF alerts and AGN catalogs**.  
 It enables systematic searches for **electromagnetic counterparts** to compact binary mergers, with a particular focus on mergers that may occur in **active galactic nuclei (AGN) disks**.
 
 ---
