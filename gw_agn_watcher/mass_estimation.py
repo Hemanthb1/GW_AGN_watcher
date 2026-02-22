@@ -8,6 +8,10 @@ from tqdm import tqdm
 from gwpy.table import Table
 from sklearn.ensemble import RandomForestClassifier
 
+"""
+Written by Isaac McMahon, 2026-02-22
+Based on the Ordinal Classification photo-z method from https://doi.org/10.1093/mnras/stv1567
+"""
 
 def run_simulation(n_events, outdir='simulation_output', min_mass=1.2, max_mass=75.0, max_distance=6000.0, snr_threshold=8.0, downsample_nside=8):
     """
