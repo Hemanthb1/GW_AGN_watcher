@@ -5,3 +5,8 @@ matplotlib
 alerce
 ligo
 healpy
+pickle
+pandas
+tqdm
+gwpy
+scikit-learn
