@@ -10,3 +10,5 @@ pandas
 tqdm
 gwpy
 scikit-learn
+lalsuite
+ligo.skymap
