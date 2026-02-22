@@ -11,4 +11,5 @@ tqdm
 gwpy
 scikit-learn
 lalsuite
+lalsimulation
 ligo.skymap
