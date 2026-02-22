@@ -14,7 +14,7 @@ It enables systematic searches for **electromagnetic counterparts** to compact b
 ---
 
 ### Key Features
-
+- **Predicts the chirp mass of the GW superevent**
 - 📡 **Ingest LVK skymaps** (`.fits`, HEALPix format) 
 - 🌌 **Crossmatch ZTF alerts** with AGN catalogs (e.g., Milliquas)
 - 🧠 **Apply ML-based filters** using ALeRCE classifiers, Pan-STARRS morphology, and Deep Real/Bogus scores
