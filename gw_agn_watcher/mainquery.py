@@ -21,7 +21,8 @@ def query_alerce_clusters(conn,skymap_df, time,ra,dec, ndays=200, alpha=0.01):
     n_clusters = len(skymap_df['cluster_label'].unique())
 
     fig = plt.figure()
-    ax = fig.add_subplot(111, projection='mollweide')
+
+    ax = fig.add_subplot(111, projection='astro hours mollweide')
 
     for i in range(n_clusters):
         cluster_data = skymap_df[skymap_df['cluster_label'] == i]
@@ -41,7 +42,7 @@ def query_alerce_clusters(conn,skymap_df, time,ra,dec, ndays=200, alpha=0.01):
             print("querying cluster:", i)
             x = np.array(alpha_shape.exterior.coords.xy[0])
             y = np.array(alpha_shape.exterior.coords.xy[1])
-            ax.plot(x, y,'g',linewidth=1)#S,transform=ax.get_transform('world'))
+            ax.plot(x, y,linewidth=1,transform=ax.get_transform('world'),color='green')
             result = []
             for l in range(len(x)):
                 result.append(x[l])
@@ -68,12 +69,12 @@ def query_alerce_clusters(conn,skymap_df, time,ra,dec, ndays=200, alpha=0.01):
             try:
                 results = pd.read_sql_query(query, conn)
                 new_df = pd.concat([new_df, results], ignore_index=True)
-                ax.scatter(new_df['meanra'], new_df['meandec'], s=1, alpha=0.1
-                )#transform=ax.get_transform('world'))
+                ax.scatter(new_df['meanra'], new_df['meandec'], s=1, alpha=0.1,color='y',
+                transform=ax.get_transform('world'))
             except Exception as e:
                 print(f"⚠️ Query failed for cluster {i}: {e}")
 
-        ax.scatter(ra,dec,s=10)#transform=ax.get_transform('world'))
+        #ax.scatter(ra,dec,s=10,transform=ax.get_transform('world'))
 
     conn.close()
     plt.show()
