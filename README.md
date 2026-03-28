@@ -33,6 +33,7 @@ pip install gw_agn_watcher
 ### Citation
 
 If you use this package, please cite:
+```
 @ARTICLE{2026arXiv260304342B,
        author = {{Bommireddy}, Hemanth and {Forster}, Francisco and {McMahon}, Isaac and {Pavez Herrera}, Manuel and {Cartier}, Regis and {Olivares Estay}, Felipe and {Hern{\'a}ndez Garc{\'\i}a}, Lorena and {Mart{\'\i}nez Aldama}, Mary Loli and {Mu{\~n}oz Arancibia}, Alejandra},
         title = "{A Broker Integrated Algorithm for Gravitational Wave - Electromagnetic Counterpart Searches in O4a and O4b Runs}",
