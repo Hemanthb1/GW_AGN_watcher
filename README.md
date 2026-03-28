@@ -29,3 +29,23 @@ It enables systematic searches for **electromagnetic counterparts** to compact b
 
 ```bash
 pip install gw_agn_watcher
+
+If you use this package, please cite:
+@ARTICLE{2026arXiv260304342B,
+       author = {{Bommireddy}, Hemanth and {Forster}, Francisco and {McMahon}, Isaac and {Pavez Herrera}, Manuel and {Cartier}, Regis and {Olivares Estay}, Felipe and {Hern{\'a}ndez Garc{\'\i}a}, Lorena and {Mart{\'\i}nez Aldama}, Mary Loli and {Mu{\~n}oz Arancibia}, Alejandra},
+        title = "{A Broker Integrated Algorithm for Gravitational Wave - Electromagnetic Counterpart Searches in O4a and O4b Runs}",
+      journal = {arXiv e-prints},
+     keywords = {High Energy Astrophysical Phenomena, Instrumentation and Methods for Astrophysics},
+         year = 2026,
+        month = mar,
+          eid = {arXiv:2603.04342},
+        pages = {arXiv:2603.04342},
+          doi = {10.48550/arXiv.2603.04342},
+archivePrefix = {arXiv},
+       eprint = {2603.04342},
+ primaryClass = {astro-ph.HE},
+       adsurl = {https://ui.adsabs.harvard.edu/abs/2026arXiv260304342B},
+      adsnote = {Provided by the SAO/NASA Astrophysics Data System}
+}
+
+
