@@ -29,8 +29,8 @@ It enables systematic searches for **electromagnetic counterparts** to compact b
 
 ```bash
 pip install gw_agn_watcher
-'''
-### Citing
+```
+### Citation
 
 If you use this package, please cite:
 @ARTICLE{2026arXiv260304342B,
