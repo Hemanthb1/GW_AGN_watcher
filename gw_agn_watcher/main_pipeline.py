@@ -108,4 +108,4 @@ def run_pipeline(skymap_url, milliquas_csv, sigma_cut="2sigma"):
     print(f"🔗 Final ALeRCE viewer link generated.\n")
 
     print("🏁 Pipeline completed successfully.")
-    return candidates, ra_deg, dec_deg, url, mjd_gw, ra_deg, dec_deg
+    return candidates, ra_deg, dec_deg, url, mjd_obs, ra_deg, dec_deg
