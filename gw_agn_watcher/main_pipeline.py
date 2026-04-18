@@ -16,7 +16,7 @@ def run_pipeline(skymap_url, milliquas_csv, sigma_cut="2sigma"):
     print(f"📂 Milliquas catalog: {milliquas_csv}\n")
 
     # --- Step 1: Download and process skymap ---
-    skymap, skymap1, ra_deg, dec_deg, mjd_obs, event_name = radecligo.radecligo(skymap_url)
+    skymap, skymap1, ra_deg, dec_deg, mjd_gw, event_name = radecligo.radecligo(skymap_url)
     print(f"✅ Loaded skymap '{event_name}' with {len(skymap1)} pixels in 90% region.\n")
 
     # --- Step 2: Find clusters in the skymap ---
@@ -108,4 +108,4 @@ def run_pipeline(skymap_url, milliquas_csv, sigma_cut="2sigma"):
     print(f"🔗 Final ALeRCE viewer link generated.\n")
 
     print("🏁 Pipeline completed successfully.")
-    return candidates, ra_deg, dec_deg, url
+    return candidates, ra_deg, dec_deg, url, mjd_gw, ra_deg, dec_deg
