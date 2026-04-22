@@ -35,7 +35,7 @@ def run_pipeline(skymap_url, milliquas_csv, sigma_cut="2sigma"):
 
     # --- Step 4: Match with Milliquas ---
     agn = pd.read_csv(milliquas_csv)
-    nagn = match_milliquas.match_with_milliquas(new_df, agn)
+    nagn = match_milliquas.match_with_milliquas(new_df, agn, event_name=event_name)
     print(f"✅ Matched with Milliquas: {len(nagn)} candidate AGNs after spatial crossmatch.\n")
 
     if nagn.empty:
