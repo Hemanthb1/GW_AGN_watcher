@@ -10,7 +10,7 @@ from astropy.coordinates import SkyCoord
 import astropy.units as u
 
 
-def match_with_milliquas(cr, df1, output_csv='matched_milliquas.csv'):
+def match_with_milliquas(cr, df1, event_name="unknown", output_csv=None):
     """
     Crossmatch candidate sources with the Milliquas catalog.
 
@@ -56,6 +56,9 @@ def match_with_milliquas(cr, df1, output_csv='matched_milliquas.csv'):
 
     # === Filter by close match (<= 0.0008 deg ≈ 2.88 arcsec) ===
     nagn = cr[cr['agnsep'] <= 0.0008]
+
+    if output_csv is None:
+        output_csv = f"{event_name}_matched_milliquas.csv"
 
     # === Save and report ===
     nagn.to_csv(output_csv, index=False)
