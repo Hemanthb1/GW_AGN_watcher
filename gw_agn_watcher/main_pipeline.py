@@ -102,10 +102,14 @@ def run_pipeline(skymap_url, milliquas_csv, sigma_cut="2sigma"):
         print("⚠️ No candidates remain after extinction filtering. Returning empty set.")
         return candidates, ra_deg, dec_deg, None
 
+    candidates = candidates.rename(columns={"oid_x": "oid"})
+    final_cand = pd.merge(candidates, nagn, on='oid', suffixes=('', '_drop'))
+    final_cand = final_cand[[c for c in final_cand.columns if not c.endswith('_drop')]]
+
     # --- Step 8: Generate ALeRCE viewer URL ---
     suffix = "&count=true&page=1&perPage=1000&sortDesc=true&selectedClassifier=stamp_classifier"
-    url = "https://alerce.online/?" + "&".join(f"oid={i}" for i in candidates.oid_x) + suffix
+    url = "https://alerce.online/?" + "&".join(f"oid={i}" for i in final_cand.oid) + suffix
     print(f"🔗 Final ALeRCE viewer link generated.\n")
 
     print("🏁 Pipeline completed successfully.")
-    return candidates, ra_deg, dec_deg, url, mjd_obs, ra_deg, dec_deg
+    return final_cand, ra_deg, dec_deg, url, mjd_obs
