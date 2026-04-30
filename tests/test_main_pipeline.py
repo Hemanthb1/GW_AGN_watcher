@@ -5,9 +5,19 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import importlib
 
-from . import radecligo, findminclust, divide, mainquery, match_milliquas
-from . import redshift, classifiers, detections, extinction
+from gw_agn_watcher import radecligo, findminclust, divide, mainquery, match_milliquas
+from gw_agn_watcher import redshift, classifiers, detections, extinction
 from .db import get_alerce_connection
+import re
+import numpy as np
+from astropy.utils.data import download_file
+from ligo.skymap.io import fits
+from astropy.coordinates import Distance
+from ligo.skymap.distance import parameters_to_marginal_moments
+from astropy import units as u
+import astropy.cosmology.units as cu
+from astropy.cosmology import WMAP9
+import pandas as pd
 def test_run_pipeline(monkeypatch, tmp_path):
 
     def mock_radecligo(url):
