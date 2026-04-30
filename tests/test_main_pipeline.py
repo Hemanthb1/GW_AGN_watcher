@@ -7,7 +7,7 @@ import importlib
 
 from gw_agn_watcher import radecligo, findminclust, divide, mainquery, match_milliquas
 from gw_agn_watcher import redshift, classifiers, detections, extinction
-from .db import get_alerce_connection
+from gw_agn_watcher.db import get_alerce_connection
 import re
 import numpy as np
 from astropy.utils.data import download_file
