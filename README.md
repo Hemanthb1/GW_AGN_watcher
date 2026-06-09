@@ -24,8 +24,87 @@ It enables systematic searches for **electromagnetic counterparts** to compact b
 - 🔧 **Modular and extensible** — suitable for ToO planning, multi-messenger analyses, and survey follow-up
 
 ---
-### Output
-Resulting dataframe for events passing through each filter is saved
+## Outputs
+
+The `run_pipeline()` function returns:
+
+```python
+final_cand, ra_deg, dec_deg, url, mjd_obs
+```
+
+### `final_cand`
+
+A pandas DataFrame containing the final list of GW-associated AGN candidates after all filtering steps:
+
+* Spatial localization within the GW skymap
+* Crossmatch with the Milliquas AGN catalog
+* Distance/redshift consistency with the GW event
+* Stamp and light-curve classifier filtering
+* Galactic plane and extinction cuts
+
+This table represents the primary science output of the pipeline.
+
+### `ra_deg`, `dec_deg`
+
+Sky coordinates (in degrees) corresponding to the maximum-probability location of the gravitational-wave event.
+
+```python
+ra_deg   # Right Ascension (deg)
+dec_deg  # Declination (deg)
+```
+
+These values can be used for visualization and follow-up observations.
+
+### `url`
+
+A pre-generated ALeRCE viewer URL containing all final candidate objects.
+
+Opening this URL allows interactive inspection of the selected candidates through the ALeRCE portal.
+
+Example:
+
+```python
+https://alerce.online/?oid=...
+```
+
+### `mjd_obs`
+
+Modified Julian Date (MJD) corresponding to the gravitational-wave event time.
+
+```python
+mjd_obs
+```
+
+This value is used internally for temporal filtering and can be useful for downstream analyses.
+
+---
+
+## Intermediate Output Files
+
+Several intermediate products are saved during execution for debugging, validation, and reproducibility.
+
+| File                  | Description                                                               |
+| --------------------- | ------------------------------------------------------------------------- |
+| `redshift.csv`        | Objects passing the default redshift calculation step                     |
+| `redshift_1sigma.csv` | Objects consistent with the GW distance at 1σ                             |
+| `redshift_2sigma.csv` | Objects consistent with the GW distance at 2σ                             |
+| `redshift_ksigma.csv` | Objects consistent with the user-defined kσ distance cut                  |
+| `classifiers.csv`     | Results from ALeRCE stamp and light-curve classifiers                     |
+| `final1.csv`          | Merged classifier and detection information prior to extinction filtering |
+
+---
+
+## Early Exit Conditions
+
+The pipeline will terminate early and return an empty DataFrame if:
+
+* No ALeRCE sources are found within the GW localization region.
+* No Milliquas AGNs are spatially matched.
+* No objects pass the selected redshift consistency criterion.
+* No candidates survive extinction and Galactic plane filtering.
+
+In these cases the returned candidate table will be empty, indicating no viable GW–AGN counterparts were identified.
+---
 
 
 ### Installation
