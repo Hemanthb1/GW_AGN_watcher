@@ -24,6 +24,9 @@ It enables systematic searches for **electromagnetic counterparts** to compact b
 - 🔧 **Modular and extensible** — suitable for ToO planning, multi-messenger analyses, and survey follow-up
 
 ---
+### Output
+Resulting dataframe for events passing through each filter is saved
+
 
 ### Installation
 
