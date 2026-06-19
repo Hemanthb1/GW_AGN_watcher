@@ -2,7 +2,8 @@
 
 [![PyPI version](https://badge.fury.io/py/gw-agn-watcher.svg)](https://pypi.org/project/gw-agn-watcher/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Build](https://github.com/yourusername/gw_agn_watcher/actions/workflows/publish.yml/badge.svg)](https://github.com/yourusername/gw_agn_watcher/actions)
+[![Build](https://github.com/yourusername/gw_agn_watcher/actions/workflows/publish.yml/badge.svg)]
+[![Build Sphinx Docs](https://github.com/Hemanthb1/GW_AGN_watcher/actions/workflows/build_docs.yml/badge.svg)](https://github.com/Hemanthb1/GW_AGN_watcher/actions/workflows/build_docs.yml)
 
 ---
 
